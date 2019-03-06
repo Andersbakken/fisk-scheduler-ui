@@ -1,0 +1,9 @@
+angular.json
+e2e/*
+node_modules/*
+package.json
+package-lock.json
+README.md
+src/*
+tsconfig.json
+tslint.json

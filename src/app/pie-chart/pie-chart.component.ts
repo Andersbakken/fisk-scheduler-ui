@@ -275,11 +275,7 @@ export class PieChartComponent {
                     add = 8;
 
                     // legend usage
-                    let usage = "";
-                    if (c.cacheJobs) {
-                        usage = c.cacheJobs + " / ";
-                    }
-                    usage += c.jobs + " (" + Math.round(c.jobs / maxJobs * 1000) / 10 + "%)";
+                    const usage = (c.cacheJobs || 0) + " / " + c.jobs + " (" + Math.round(c.jobs / maxJobs * 1000) / 10 + "%)";
                     const metrics = ctx.measureText(usage);
 
                     // legend usage background
@@ -317,11 +313,13 @@ export class PieChartComponent {
                     pos += (this.view.width - 10) * (this.stats.jobsStarted / statsTotal);
                     str = "Compiles " + Number(this.stats.jobsStarted).toLocaleString() + " " + ((this.stats.jobsStarted / statsTotal) * 100).toFixed(1) + "%";
                     ctx.fillText(str, tpos, this.view.height - statsHeight - 10);
-                    tpos += ctx.measureText(str).width + 30;
-                    ctx.fillStyle = "#d33";
-                    ctx.fillRect(pos, this.view.height - statsHeight - 5, (this.view.width - 10) * (this.stats.jobsFailed / statsTotal), statsHeight);
-                    str = "Failures " + Number(this.stats.jobsFailed).toLocaleString() + " " + ((this.stats.jobsFailed / statsTotal) * 100).toFixed(1) + "%";
-                    ctx.fillText(str, tpos, this.view.height - statsHeight - 10);
+                    if (this.stats.jobsFailed > 0) {
+                        tpos += ctx.measureText(str).width + 30;
+                        ctx.fillStyle = "#d33";
+                        ctx.fillRect(pos, this.view.height - statsHeight - 5, (this.view.width - 10) * (this.stats.jobsFailed / statsTotal), statsHeight);
+                        str = "Failures " + Number(this.stats.jobsFailed).toLocaleString() + " " + ((this.stats.jobsFailed / statsTotal) * 100).toFixed(1) + "%";
+                        ctx.fillText(str, tpos, this.view.height - statsHeight - 10);
+                    }
                 }
 
                 window.requestAnimationFrame(animate);

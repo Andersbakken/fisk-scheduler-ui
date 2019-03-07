@@ -4,6 +4,7 @@ node_modules/*
 package.json
 package-lock.json
 README.md
+.editorconfig
 src/*
 tsconfig.json
 tslint.json

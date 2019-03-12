@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "dist": "ng build --aot --prod",
     "gzip": "cd dist/ui && for i in *.js; do gzip -f -k \"$i\"; done && for i in *.css; do gzip -f -k \"$i\"; done",
-    "prepublish": "ng build --aot --prod"
+    "prepare": "ng build --aot --prod"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.5",

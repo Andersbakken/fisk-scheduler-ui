@@ -481,6 +481,7 @@ export class PieChartComponent {
         this.jobs.forEach((job, id) => {
             if (slaveid == this._slaveId(job.slave)) {
                 this.jobs.delete(id);
+                this.currentJobs -= 1;
                 this._adjustClients(job.client, -1, 0);
             }
         });

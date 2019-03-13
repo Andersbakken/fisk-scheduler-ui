@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { TabChangedService } from './tab-changed.service';
 
 @Component({
@@ -20,8 +20,8 @@ export class AppComponent {
 
     constructor(private tabChanged: TabChangedService, private router: Router) {
         router.events.forEach((event) => {
-            if (event instanceof NavigationStart) {
-                const url = event.url;
+            if (event instanceof NavigationEnd) {
+                const url = event.urlAfterRedirects;
                 for (let idx = 0; idx < this.navLinks.length; ++idx) {
                     if (this.navLinks[idx].path == url) {
                         this.currentTab = idx;

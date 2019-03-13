@@ -27,5 +27,9 @@ export class TabChangedService {
 
     onChanged(on: { (index: number, name: string): void; }) {
         this._changeListeners.push(on);
+
+        setTimeout(() => {
+            on(this._index, this._name);
+        }, 0);
     }
 }

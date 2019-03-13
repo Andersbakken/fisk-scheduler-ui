@@ -8,9 +8,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "dist": "ng build --aot --prod",
+    "dist": "./scripts/rmlinks.sh dist/ui && ng build --aot --prod && ./scripts/mklinks.sh dist/ui",
     "gzip": "cd dist/ui && for i in *.js; do gzip -f -k \"$i\"; done && for i in *.css; do gzip -f -k \"$i\"; done",
-    "prepare": "ng build --aot --prod"
+    "prepare": "./scripts/rmlinks.sh dist/ui && ng build --aot --prod && ./scripts/mklinks.sh dist/ui"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.5",

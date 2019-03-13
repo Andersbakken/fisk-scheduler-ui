@@ -18,7 +18,6 @@ import { ConfigService } from './config.service';
 import { MessageService } from './message.service';
 import { TabChangedService } from './tab-changed.service';
 import { ConfigComponent } from './config/config.component';
-import { MainComponent } from './main/main.component';
 import { LogsComponent } from './logs/logs.component';
 import { LogComponent } from './log/log.component';
 import { PieChartComponent } from './pie-chart/pie-chart.component';
@@ -29,8 +28,7 @@ const appRoutes: Routes = [
     { path: 'pie-chart', component: PieChartComponent },
     { path: 'logs', component: LogsComponent },
     { path: 'compilers', component: CompilersComponent },
-    { path: 'main', component: MainComponent },
-    { path: '', redirectTo: '/main', pathMatch: 'full' }
+    { path: '', redirectTo: '/pie-chart', pathMatch: 'full' }
 ];
 
 @NgModule({
@@ -40,7 +38,6 @@ const appRoutes: Routes = [
     declarations: [
         AppComponent,
         ConfigComponent,
-        MainComponent,
         LogsComponent,
         LogComponent,
         PieChartComponent,

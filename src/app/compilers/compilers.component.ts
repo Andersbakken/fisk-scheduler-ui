@@ -27,9 +27,9 @@ export class CompilersComponent {
                             e.hash = k;
                         const info = { name: undefined, major: undefined, minor: undefined, patch: undefined, version: "" };
                         const infos = (e.info || "").split("\n");
-                        const crx = /^(clang) version ([0-9]+)\.([0-9+])\.([0-9]+) /;
-                        const grx = /^(gcc) version ([0-9]+)\.([0-9+])\.([0-9]+) /;
-                        const lrx = /^(Apple LLVM) version ([0-9]+)\.([0-9+])\.([0-9]+) /;
+                        const crx = /^(clang) version ([0-9x]+)\.([0-9+x])\.([0-9x]+)/;
+                        const grx = /^(gcc) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
+                        const lrx = /^(Apple LLVM) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
                         const trx = /^Target: (.*)$/;
                         let t, m;
                         for (let i = 0; i < infos.length && (!t || !m); ++i) {
@@ -43,10 +43,12 @@ export class CompilersComponent {
 
                         if (m) {
                             info.name = m[1];
-                            info.major = parseInt(m[2]);
-                            info.minor = parseInt(m[3]);
-                            info.patch = parseInt(m[4]);
+                            info.major = parseInt(m[2]) || m[2];
+                            info.minor = parseInt(m[3]) || m[3];
+                            info.patch = parseInt(m[4]) || m[4];
                             info.version = `${info.major}.${info.minor}.${info.patch}`;
+                        } else {
+                            console.log("failed", infos);
                         }
                         if (t) {
                             e.target = t[1];

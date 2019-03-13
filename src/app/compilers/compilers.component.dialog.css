@@ -11,3 +11,10 @@
     overflow: auto;
     max-height: 70vh !important;
 }
+
+.info {
+    white-space: pre-line;
+    margin-bottom: 2em;
+    border: 1px dashed #ccc;
+    padding: 5px;
+}

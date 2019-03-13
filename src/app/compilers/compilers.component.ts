@@ -98,6 +98,7 @@ export class CompilersComponentDialog {
     public others: any = [];
     public checked: any = {};
     public args: any = {};
+    public info: string = "";
 
     constructor(public dialogRef: MatDialogRef<CompilersComponentDialog>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -105,6 +106,8 @@ export class CompilersComponentDialog {
             if (data.current != data.environments[i]) {
                 this.others.push(data.environments[i]);
                 this.checked[data.environments[i].hash] = false;
+            } else {
+                this.info = data.environments[i].info;
             }
         }
         if (data.links) {

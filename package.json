@@ -10,7 +10,9 @@
     "e2e": "ng e2e",
     "dist": "./scripts/rmlinks.sh dist/ui && ng build --aot --prod && ./scripts/mklinks.sh dist/ui",
     "gzip": "cd dist/ui && for i in *.js; do gzip -f -k \"$i\"; done && for i in *.css; do gzip -f -k \"$i\"; done",
-    "prepare": "./scripts/rmlinks.sh dist/ui && ng build --aot --prod && ./scripts/mklinks.sh dist/ui"
+    "prepare": "./scripts/rmlinks.sh dist/ui && ng build --aot --prod && ./scripts/mklinks.sh dist/ui",
+    "postinstall": "./scripts/mklinks.sh dist/ui",
+    "postuninstall": "./scripts/rmlinks.sh dist/ui"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.5",

@@ -23,6 +23,7 @@ export class PieChartComponent implements OnDestroy {
     pieBuilding: boolean;
     noAnimate: boolean;
     inited: boolean = false;
+    destroyed: boolean = false;
     onTabChange: number = undefined;
     onConfig: number = undefined;
     fiskData: number = undefined;
@@ -56,6 +57,7 @@ export class PieChartComponent implements OnDestroy {
                 break;
             }
         });
+        this.fisk.send({ type: "sendInfo" });
         this.fiskOpen = this.fisk.on("open", () => {
             this._reset();
             this.message.showMessage("connected to " + this.fisk.host + ":" + this.fisk.port);
@@ -64,16 +66,7 @@ export class PieChartComponent implements OnDestroy {
             this._reset();
         });
 
-        window.addEventListener("resize", () => {
-            //console.log(window.innerWidth, window.innerHeight);
-            const canvas = document.getElementById("canvas-chart");
-
-            if (canvas) {
-                const rect: any = canvas.getBoundingClientRect();
-                this.view.width = window.innerWidth - (rect.x * 2);
-                this.view.height = window.innerHeight - rect.y - 50;
-            }
-        });
+        window.addEventListener("resize", this._onResize);
 
         this.onConfig = this.config.onChange((key: string) => {
             if (key == "client" || key == "fgcolor" || key == "bgcolor") {
@@ -157,6 +150,9 @@ export class PieChartComponent implements OnDestroy {
             const frameMs = (1 / 60) * 1000;
             let last = 0;
             const animate = ts => {
+                if (this.destroyed)
+                    return;
+
                 const legendSpace = this.config.get("chart-legend-space", 400);
                 const legendX = this.view.width - legendSpace + 10;
                 const statsHeight = 30;
@@ -340,6 +336,20 @@ export class PieChartComponent implements OnDestroy {
         this.fisk.remove("open", this.fiskOpen);
         this.fisk.remove("data", this.fiskData);
         this.fisk.remove("scheduler", this.fiskScheduler);
+        window.removeEventListener("resize", this._onResize);
+
+        this.destroyed = true;
+    }
+
+    _onResize() {
+        //console.log(window.innerWidth, window.innerHeight);
+        const canvas = document.getElementById("canvas-chart");
+
+        if (canvas) {
+            const rect: any = canvas.getBoundingClientRect();
+            this.view.width = window.innerWidth - (rect.x * 2);
+            this.view.height = window.innerHeight - rect.y - 50;
+        }
     }
 
     _reset() {

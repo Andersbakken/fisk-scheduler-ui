@@ -42,10 +42,13 @@ export class WebSocketService {
             for (let i = 0; i < this.errorListeners.length; ++i) {
                 this.errorListeners[i](e);
             }
+            console.log("ws connect error", e);
             return;
         }
 
+        console.log("ws connected");
         this.addListener('open', event => {
+            console.log("ws open");
             this.isopen = true;
             // send all the pending stuff
             if (this.pending !== undefined) {
@@ -60,6 +63,7 @@ export class WebSocketService {
             }
         });
         this.addListener('message', event => {
+            console.log("ws msg", event.data);
             let data: any;
             try {
                 data = JSON.parse(event.data);
@@ -72,6 +76,7 @@ export class WebSocketService {
             }
         });
         this.addListener('close', () => {
+            console.log("ws close");
             const closeListeners = this.closeListeners;
 
             this.removeListeners();
@@ -82,6 +87,7 @@ export class WebSocketService {
             }
         });
         this.addListener('error', err => {
+            console.log("ws error", err);
             if (this.socket) {
                 this.socket.close();
             }

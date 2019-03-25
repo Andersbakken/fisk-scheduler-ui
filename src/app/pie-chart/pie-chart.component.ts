@@ -55,6 +55,9 @@ export class PieChartComponent implements OnDestroy {
             case "stats":
                 this._updateStats(data);
                 break;
+            case "schedulerInfo":
+                console.log("got scheduler info", data);
+                break;
             }
         });
         this.fisk.send({ type: "sendInfo" });

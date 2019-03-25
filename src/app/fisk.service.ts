@@ -8,11 +8,12 @@ import { BackoffService } from './backoff.service';
 })
 export class FiskService {
     private pendingConnect: Array<any> = [];
-    private dataListeners: { (data: any): void; } [] = [];
-    private openListeners: { (): void; } [] = [];
-    private schedulerListeners: { (): void; } [] = [];
+    private dataListeners: any = [];
+    private openListeners: any = [];
+    private schedulerListeners: any = [];
     private _host: string;
     private _port: number;
+    private _currentKey: number = 0;
 
     get host(): string
     {
@@ -75,15 +76,40 @@ export class FiskService {
     on(name: string, on: { (data?: any): void; }) {
         switch (name) {
         case "data":
-            this.dataListeners.push(on);
+            this.dataListeners.push({ key: ++this._currentKey, cb: on });
             break;
         case "open":
-            this.openListeners.push(on);
+            this.openListeners.push({ key: ++this._currentKey, cb: on });
             break;
         case "scheduler":
-            this.schedulerListeners.push(on);
+            this.schedulerListeners.push({ key: ++this._currentKey, cb: on });
             break;
+        default:
+            return -1;
         }
+        return this._currentKey;
+    }
+
+    remove(name: string, key: number) {
+        const removeKey = (items: Array<any>, key: number) => {
+            for (let k = 0; k < items.length; ++k) {
+                if (items[k].key == key) {
+                    items.splice(k, 1);
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        switch (name) {
+        case "data":
+            return removeKey(this.dataListeners, key);
+        case "open":
+            return removeKey(this.openListeners, key);
+        case "scheduler":
+            return removeKey(this.schedulerListeners, key);
+        }
+        return false;
     }
 
     send(message: any) {
@@ -115,9 +141,9 @@ export class FiskService {
         }
     }
 
-    private emit(listeners: { (data: any): void; } [], data?: any) {
+    private emit(listeners: any, data?: any) {
         for (let i = 0; i < listeners.length; ++i) {
-            listeners[i](data);
+            listeners[i].cb(data);
         }
     }
 }

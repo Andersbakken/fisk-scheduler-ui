@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FiskService } from '../fisk.service';
 import { ConfigService } from '../config.service';
 import { MessageService } from '../message.service';
@@ -10,7 +10,7 @@ import { TabChangedService } from '../tab-changed.service';
     styleUrls: ['./pie-chart.component.css']
 })
 
-export class PieChartComponent {
+export class PieChartComponent implements OnDestroy {
     view: any = { width: 0, height: 0 };
     ctx: any;
     clientColor: any;
@@ -23,11 +23,16 @@ export class PieChartComponent {
     pieBuilding: boolean;
     noAnimate: boolean;
     inited: boolean = false;
+    onTabChange: number = undefined;
+    onConfig: number = undefined;
+    fiskData: number = undefined;
+    fiskOpen: number = undefined;
+    fiskScheduler: number = undefined;
 
     constructor(private fisk: FiskService, private config: ConfigService,
                 private tabChanged: TabChangedService, private message: MessageService,
                 private changeRef: ChangeDetectorRef) {
-        this.fisk.on("data", (data: any) => {
+        this.fiskData = this.fisk.on("data", (data: any) => {
             switch (data.type) {
             case "slaveAdded":
                 this._slaveAdded(data);
@@ -51,11 +56,11 @@ export class PieChartComponent {
                 break;
             }
         });
-        this.fisk.on("open", () => {
+        this.fiskOpen = this.fisk.on("open", () => {
             this._reset();
             this.message.showMessage("connected to " + this.fisk.host + ":" + this.fisk.port);
         });
-        this.fisk.on("scheduler", () => {
+        this.fiskScheduler = this.fisk.on("scheduler", () => {
             this._reset();
         });
 
@@ -70,7 +75,7 @@ export class PieChartComponent {
             }
         });
 
-        this.config.onChange((key: string) => {
+        this.onConfig = this.config.onChange((key: string) => {
             if (key == "client" || key == "fgcolor" || key == "bgcolor") {
                 this.clientColor = { name: this.config.get("client"), fgcolor: this.config.get("fgcolor"), bgcolor: this.config.get("bgcolor") };
 
@@ -83,7 +88,7 @@ export class PieChartComponent {
             }
         });
 
-        this.tabChanged.onChanged((index, name) => {
+        this.onTabChange = this.tabChanged.onChanged((index, name) => {
             if (name != "Pie Chart" || this.inited)
                 return;
 
@@ -326,6 +331,15 @@ export class PieChartComponent {
             };
             window.requestAnimationFrame(animate);
         });
+    }
+
+    ngOnDestroy() {
+        console.log("destroyed");
+        this.tabChanged.remove(this.onTabChange);
+        this.config.remove(this.onConfig);
+        this.fisk.remove("open", this.fiskOpen);
+        this.fisk.remove("data", this.fiskData);
+        this.fisk.remove("scheduler", this.fiskScheduler);
     }
 
     _reset() {

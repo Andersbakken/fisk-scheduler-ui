@@ -4,12 +4,14 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class ConfigService {
-    private changeListeners: { (key: string): void; } [];
+    private changeListeners: any;
     private cache: { [key: string]: any };
+    private currentKey: number;
 
     constructor() {
         this.changeListeners = [];
         this.cache = {};
+        this.currentKey = 0;
     }
 
     set(key: string, value: any, trigger?: boolean) {
@@ -20,7 +22,7 @@ export class ConfigService {
             return;
 
         for (let i = 0; i < this.changeListeners.length; ++i) {
-            this.changeListeners[i](key);
+            this.changeListeners[i].cb(key);
         }
     }
 
@@ -52,6 +54,17 @@ export class ConfigService {
     }
 
     onChange(on: { (key: string): void; }) {
-        this.changeListeners.push(on);
+        this.changeListeners.push({ key: ++this.currentKey, cb: on });
+        return this.currentKey;
+    }
+
+    remove(key: number) {
+        for (var k = 0; k < this.changeListeners.length; ++k) {
+            if (this.changeListeners[k].key == key) {
+                this.changeListeners.splice(k, 1);
+                return true;
+            }
+        }
+        return false;
     }
 }

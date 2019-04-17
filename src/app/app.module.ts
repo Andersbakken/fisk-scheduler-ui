@@ -22,6 +22,7 @@ import { LogsComponent } from './logs/logs.component';
 import { LogComponent } from './log/log.component';
 import { PieChartComponent } from './pie-chart/pie-chart.component';
 import { CompilersComponent, CompilersComponentDialog } from './compilers/compilers.component';
+import { SlaveInfoComponent } from './slave-info/slave-info.component';
 
 const appRoutes: Routes = [
     { path: 'config', component: ConfigComponent },
@@ -33,7 +34,8 @@ const appRoutes: Routes = [
 
 @NgModule({
     entryComponents: [
-        CompilersComponentDialog
+        CompilersComponentDialog,
+        SlaveInfoComponent
     ],
     declarations: [
         AppComponent,
@@ -42,7 +44,8 @@ const appRoutes: Routes = [
         LogComponent,
         PieChartComponent,
         CompilersComponent,
-        CompilersComponentDialog
+        CompilersComponentDialog,
+        SlaveInfoComponent
     ],
     imports: [
         BrowserModule,

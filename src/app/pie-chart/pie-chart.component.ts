@@ -1,8 +1,10 @@
 import { Component, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { FiskService } from '../fisk.service';
 import { ConfigService } from '../config.service';
 import { MessageService } from '../message.service';
 import { TabChangedService } from '../tab-changed.service';
+import { SlaveInfoComponent } from '../slave-info/slave-info.component';
 
 @Component({
     selector: 'app-pie-chart',
@@ -32,7 +34,7 @@ export class PieChartComponent implements OnDestroy {
 
     constructor(private fisk: FiskService, private config: ConfigService,
                 private tabChanged: TabChangedService, private message: MessageService,
-                private changeRef: ChangeDetectorRef) {
+                private changeRef: ChangeDetectorRef, private dialog: MatDialog) {
         this.fiskData = this.fisk.on("data", (data: any) => {
             switch (data.type) {
             case "slaveAdded":
@@ -91,19 +93,20 @@ export class PieChartComponent implements OnDestroy {
             const canvas = <HTMLCanvasElement> document.getElementById("canvas-chart");
             if (!canvas)
                 return;
+
+            const contains = (x, y, rect) => {
+                if (x >= rect.x && x <= rect.x + rect.width) {
+                    if (y >= rect.y && y <= rect.y + rect.height)
+                        return true;
+                }
+                return false;
+            };
+
             canvas.addEventListener("click", event => {
                 const ncanvas = <HTMLCanvasElement> document.getElementById("canvas-chart");
                 const br = ncanvas.getBoundingClientRect() as DOMRect;
                 const x = event.pageX - br.x
                 const y = event.pageY - br.y
-
-                const contains = (x, y, rect) => {
-                    if (x >= rect.x && x <= rect.x + rect.width) {
-                        if (y >= rect.y && y <= rect.y + rect.height)
-                            return true;
-                    }
-                    return false;
-                };
 
                 this.clientJobs.forEach(c => {
                     if (contains(x, y, c.client.rect)) {
@@ -113,7 +116,24 @@ export class PieChartComponent implements OnDestroy {
                             window.open(c.client.url, "_blank");
                     }
                 });
-            })
+            });
+            canvas.addEventListener("contextmenu", event => {
+                const ncanvas = <HTMLCanvasElement> document.getElementById("canvas-chart");
+                const br = ncanvas.getBoundingClientRect() as DOMRect;
+                const x = event.pageX - br.x
+                const y = event.pageY - br.y
+
+                let ret = true;
+                this.clientJobs.forEach(c => {
+                    if (contains(x, y, c.client.rect)) {
+                        event.preventDefault();
+                        ret = false;
+
+                        this.dialog.open(SlaveInfoComponent, { data: { client: c.client, jobs: this.jobs} });
+                    }
+                });
+                return ret;
+            }, false);
 
             this.inited = true;
 
@@ -521,6 +541,15 @@ export class PieChartComponent implements OnDestroy {
 
     _jobStarted(job) {
         //console.log("job start", job.client.ip);
+        const stripTz = ts => {
+            let p = ts.indexOf("(");
+            if (p !== -1) {
+                return ts.substr(0, p);
+            }
+            return ts;
+        };
+
+        job.date = stripTz((new Date()).toTimeString()).trim();
         this.jobs.set(job.id, job);
         this._adjustClients(job.client, 1, 0);
 

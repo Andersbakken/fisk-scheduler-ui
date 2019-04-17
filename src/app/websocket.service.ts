@@ -63,7 +63,7 @@ export class WebSocketService {
             }
         });
         this.addListener('message', event => {
-            console.log("ws msg", event.data);
+            //console.log("ws msg", event.data);
             let data: any;
             try {
                 data = JSON.parse(event.data);

@@ -535,7 +535,7 @@ export class PieChartComponent implements OnDestroy {
     }
 
     _updateMaxJobsData() {
-        this.maxJobsData.text = "Slots " + this.currentJobs + " / " + this.maxJobs;
+        this.maxJobsData.text = `Slots ${this.currentJobs} / ${this.maxJobs} (${((this.currentJobs / this.maxJobs) * 100).toFixed(1)}%)`;
         this.maxJobsData.width = this.ctx.measureText(this.maxJobsData.text).width;
     }
 

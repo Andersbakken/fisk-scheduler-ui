@@ -22,6 +22,7 @@ export class PieChartComponent implements OnDestroy {
     currentJobs: number = 0;
     jobs = new Map();
     clientJobs = [];
+    minTime = 1000;
     pieBuilding: boolean;
     noAnimate: boolean;
     inited: boolean = false;
@@ -226,7 +227,15 @@ export class PieChartComponent implements OnDestroy {
                     return;
                 }
 
-                this.clientJobs.forEach(c => {
+                const now = (new Date()).valueOf();
+                for (let clientIdx = 0; clientIdx < this.clientJobs.length; ++clientIdx) {
+                    let c = this.clientJobs[clientIdx];
+                    if (c.expired && now - c.ts >= this.minTime) {
+                        this.clientJobs.splice(clientIdx, 1);
+                        --clientIdx;
+                        continue;
+                    }
+
                     //console.log("puck", this.maxJobs, c);
                     c.start = cur;
 
@@ -314,7 +323,7 @@ export class PieChartComponent implements OnDestroy {
 
                     cur += Math.PI * 2 * (c.animatedJobs / maxJobs);
                     legendY += 30 + add;
-                });
+                }
 
                 ctx.fillStyle = "#fff";
                 ctx.fillRect(0, this.view.height - statsHeight - 10, this.view.width, statsHeight + 10);
@@ -486,7 +495,7 @@ export class PieChartComponent implements OnDestroy {
                 if (!client.modifiedName)
                     client.modifiedName = client.name;
             }
-            this.clientJobs.push({ client: client, jobs: inc, cacheJobs: cacheinc, totalJobs: inc, totalCacheJobs: cacheinc });
+            this.clientJobs.push({ client: client, jobs: inc, cacheJobs: cacheinc, totalJobs: inc, totalCacheJobs: cacheinc, ts: (new Date()).valueOf(), expired: false });
 
             this.clientJobs.sort((a, b) => {
                 return a.client.modifiedName.localeCompare(b.client.modifiedName);
@@ -500,7 +509,11 @@ export class PieChartComponent implements OnDestroy {
             if (cacheinc > 0)
                 c.totalCacheJobs += cacheinc;
             if (!c.jobs && !c.cacheJobs) {
-                this.clientJobs.splice(idx, 1);
+                if ((new Date()).valueOf() - c.ts < this.minTime) {
+                    c.expired = true;
+                } else {
+                    this.clientJobs.splice(idx, 1);
+                }
             }
         }
         return true;

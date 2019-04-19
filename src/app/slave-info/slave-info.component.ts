@@ -13,9 +13,8 @@ export class SlaveInfoComponent {
     constructor(public dialogRef: MatDialogRef<SlaveInfoComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.client = data.client;
-        console.log(data.jobs);
         data.jobs.forEach(job => {
-            if (job.client.ip == this.client.ip) {
+            if (job.client.name == this.client.name) {
                 this.jobs.push(job);
             }
         });

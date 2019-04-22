@@ -233,7 +233,7 @@ export class PieChartComponent implements OnDestroy {
                 const now = (new Date()).valueOf();
                 for (let clientIdx = 0; clientIdx < this.clientJobs.length; ++clientIdx) {
                     let c = this.clientJobs[clientIdx];
-                    if (c.expired && now - c.ts >= this.minTime) {
+                    if (c.expired && !c.jobs && !c.cacheJobs && now - c.ts >= this.minTime) {
                         this.clientJobs.splice(clientIdx, 1);
                         --clientIdx;
                         continue;

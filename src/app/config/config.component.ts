@@ -22,7 +22,7 @@ export class ConfigComponent {
 
     constructor(private config: ConfigService, private tabChanged: TabChangedService) {
         this.scheduler = config.get("scheduler", location.hostname);
-        this.port = config.get("port", location.port || 80);
+        this.port = config.get("port", location.port || 8097);
         this.chartLegendSpace = config.get("chart-legend-space", 400);
         this.client = config.get("client", "");
         this.fgcolor = config.get("fgcolor", "#ffffff");

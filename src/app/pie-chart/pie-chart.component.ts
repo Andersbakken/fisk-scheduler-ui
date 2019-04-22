@@ -32,10 +32,13 @@ export class PieChartComponent implements OnDestroy {
     fiskData: number = undefined;
     fiskOpen: number = undefined;
     fiskScheduler: number = undefined;
+    onResize: any;
 
     constructor(private fisk: FiskService, private config: ConfigService,
                 private tabChanged: TabChangedService, private message: MessageService,
                 private changeRef: ChangeDetectorRef, private dialog: MatDialog) {
+        this.onResize = this._onResize.bind(this);
+
         this.fiskData = this.fisk.on("data", (data: any) => {
             switch (data.type) {
             case "slaveAdded":
@@ -72,7 +75,7 @@ export class PieChartComponent implements OnDestroy {
             this._reset();
         });
 
-        window.addEventListener("resize", this._onResize);
+        window.addEventListener("resize", this.onResize);
 
         this.onConfig = this.config.onChange((key: string) => {
             if (key == "client" || key == "fgcolor" || key == "bgcolor") {
@@ -368,7 +371,7 @@ export class PieChartComponent implements OnDestroy {
         this.fisk.remove("open", this.fiskOpen);
         this.fisk.remove("data", this.fiskData);
         this.fisk.remove("scheduler", this.fiskScheduler);
-        window.removeEventListener("resize", this._onResize);
+        window.removeEventListener("resize", this.onResize);
 
         this.destroyed = true;
     }

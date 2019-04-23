@@ -31,6 +31,10 @@ export class WebSocketService {
         this.allListeners = [];
     }
 
+    get isOpen(): boolean {
+        return this.socket && this.socket.readyState == WebSocket.OPEN;
+    }
+
     open(host: string, port: number) {
         if (this.isopen) {
             return;

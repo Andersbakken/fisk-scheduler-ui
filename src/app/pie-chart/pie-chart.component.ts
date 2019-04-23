@@ -66,7 +66,9 @@ export class PieChartComponent implements OnDestroy {
                 break;
             }
         });
-        this.fisk.send({ type: "sendInfo" });
+        if (this.fisk.isOpen) {
+            this.fisk.send({ type: "sendInfo" });
+        }
         this.fiskOpen = this.fisk.on("open", () => {
             this._reset();
             this.message.showMessage("connected to " + this.fisk.host + ":" + this.fisk.port);

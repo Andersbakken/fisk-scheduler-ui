@@ -47,6 +47,10 @@ export class FiskService {
         });
     }
 
+    get isOpen(): boolean {
+        return this.ws.isOpen;
+    }
+
     open(host: string, port: number) {
         console.log("reoping");
         this.ws.on("message", (data: any) => {

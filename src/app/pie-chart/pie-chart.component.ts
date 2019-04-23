@@ -5,6 +5,7 @@ import { ConfigService } from '../config.service';
 import { MessageService } from '../message.service';
 import { TabChangedService } from '../tab-changed.service';
 import { SlaveInfoComponent } from '../slave-info/slave-info.component';
+import * as seedrandom from 'seedrandom';
 
 @Component({
     selector: 'app-pie-chart',
@@ -400,29 +401,6 @@ export class PieChartComponent implements OnDestroy {
 
     _color(key, invert) {
         // taken from https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
-        function Alea(seed) {
-            if (seed === undefined) { seed = Date.now() + Math.random(); }
-            function Mash() {
-                var n = 4022871197;
-                return function(r) {
-                    var f;
-                    for (var t, s, u = 0, e = 0.02519603282416938; u < r.length; u++)
-                        s = r.charCodeAt(u), f = (e * (n += s) - (n*e|0)),
-                    n = 4294967296 * ((t = f * (e*n|0)) - (t|0)) + (t|0);
-                    return (n|0) * 2.3283064365386963e-10;
-                }
-            }
-            return function() {
-                var m = Mash(), a = m(" "), b = m(" "), c = m(" "), x = 1, y;
-                seed = seed.toString(), a -= m(seed), b -= m(seed), c -= m(seed);
-                a < 0 && a++, b < 0 && b++, c < 0 && c++;
-                return function() {
-                    var y = x * 2.3283064365386963e-10 + a * 2091639; a = b, b = c;
-                    return c = y - (x = y|0);
-                };
-            }();
-        }
-
         function rand(min, max, r) {
             return min + r() * (max - min);
         }
@@ -431,7 +409,7 @@ export class PieChartComponent implements OnDestroy {
             return ("0"+(Number(d).toString(16))).slice(-2);
         }
 
-        const random = Alea(key);
+        const random = seedrandom(key);
         var h = rand(1, 360, random);
         var s = rand(0, 100, random);
         var l = Math.max(rand(0, 100, random), 45);

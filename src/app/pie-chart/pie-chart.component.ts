@@ -7,6 +7,8 @@ import { TabChangedService } from '../tab-changed.service';
 import { SlaveInfoComponent } from '../slave-info/slave-info.component';
 import * as seedrandom from 'seedrandom';
 
+declare let window: any;
+
 @Component({
     selector: 'app-pie-chart',
     templateUrl: './pie-chart.component.html',
@@ -39,6 +41,7 @@ export class PieChartComponent implements OnDestroy {
                 private tabChanged: TabChangedService, private message: MessageService,
                 private changeRef: ChangeDetectorRef, private dialog: MatDialog) {
         this.onResize = this._onResize.bind(this);
+        window.jobs = this.jobs;
 
         this.fiskData = this.fisk.on("data", (data: any) => {
             switch (data.type) {
@@ -557,6 +560,7 @@ export class PieChartComponent implements OnDestroy {
     _jobFinished(job) {
         if (!this.jobs.has(job.id)) {
             console.error("No such job ", job);
+            console.error(this.jobs);
             return;
         }
         this.currentJobs -= 1;

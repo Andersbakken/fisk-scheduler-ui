@@ -560,7 +560,7 @@ export class PieChartComponent implements OnDestroy {
     _jobFinished(job) {
         if (!this.jobs.has(job.id)) {
             console.error("No such job ", job);
-            console.error(this.jobs);
+            console.error(JSON.stringify([...this.jobs]));
             return;
         }
         this.currentJobs -= 1;

@@ -23,6 +23,7 @@ import { LogComponent } from './log/log.component';
 import { PieChartComponent } from './pie-chart/pie-chart.component';
 import { CompilersComponent, CompilersComponentDialog } from './compilers/compilers.component';
 import { SlaveInfoComponent } from './slave-info/slave-info.component';
+import { HttpClientModule } from '@angular/common/http';
 
 const appRoutes: Routes = [
     { path: 'config', component: ConfigComponent },
@@ -48,18 +49,19 @@ const appRoutes: Routes = [
         SlaveInfoComponent
     ],
     imports: [
-        BrowserModule,
         BrowserAnimationsModule,
+        BrowserModule,
+        ColorPickerModule,
         FormsModule,
+        HttpClientModule,
         MatButtonModule,
         MatCardModule,
-        MatTabsModule,
-        MatInputModule,
-        MatDialogModule,
-        MatSnackBarModule,
-        MatListModule,
         MatCheckboxModule,
-        ColorPickerModule,
+        MatDialogModule,
+        MatInputModule,
+        MatListModule,
+        MatSnackBarModule,
+        MatTabsModule,
         RouterModule.forRoot(appRoutes)
     ],
     providers: [

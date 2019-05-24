@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
 import { WebSocketService } from './websocket.service';
 import { BackoffService } from './backoff.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +25,13 @@ export class FiskService {
         return this._port;
     }
 
-    constructor(private ws: WebSocketService, private backoff: BackoffService, private config: ConfigService) {
+    constructor(private ws: WebSocketService, private backoff: BackoffService, private config: ConfigService, private httpClient: HttpClient) {
+        const path = window.location.pathname.replace(/[^/]*$/, 'package.json');
+
+        this.httpClient.get(`${window.location.protocol}//${window.location.host}/${path}`, { responseType: "json" }).subscribe(res => {
+            if (res)
+                this.emit(this.dataListeners, { type: "uiInfo", package: res });
+        });
         this._host = this.config.get("scheduler", location.hostname);
         this._port = this.config.get("port", location.port || 8097);
         if (this._host !== undefined) {

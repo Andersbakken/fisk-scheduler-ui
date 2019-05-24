@@ -1,7 +1,8 @@
 #!/bin/bash
 
 mkdir -p "$1"
-cp img/favicon.png $1/
+cp img/favicon.png "$1"/
+cp package.json "$1"/
 cd "$1"
 for i in pie-chart logs compilers config; do
     ln -sf ./index.html "$i"

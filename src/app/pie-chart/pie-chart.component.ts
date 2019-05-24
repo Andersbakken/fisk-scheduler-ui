@@ -22,7 +22,6 @@ export class PieChartComponent implements OnDestroy {
     stats: any;
     maxJobs: number = 0;
     maxJobsData: any = {};
-    currentJobs: number = 0;
     jobs = new Map();
     clientJobs = [];
     minTime = 1000;
@@ -231,7 +230,7 @@ export class PieChartComponent implements OnDestroy {
                 ctx.fillStyle = "black";
                 ctx.fillText(this.maxJobsData.text, legendX - this.maxJobsData.width - 75, legendY);
 
-                const maxJobs = this.pieBuilding ? this.currentJobs : this.maxJobs;
+                const maxJobs = this.pieBuilding ? this.jobs.size : this.maxJobs;
                 if (!maxJobs) {
                     window.requestAnimationFrame(animate);
                     return;
@@ -397,7 +396,6 @@ export class PieChartComponent implements OnDestroy {
     _reset() {
         this.maxJobs = 0;
         this.maxJobsData = {};
-        this.currentJobs = 0;
         this.jobs = new Map();
         this.clientJobs = [];
     }
@@ -528,14 +526,13 @@ export class PieChartComponent implements OnDestroy {
         this.jobs.forEach((job, id) => {
             if (slaveid == this._slaveId(job.slave)) {
                 this.jobs.delete(id);
-                //this.currentJobs -= 1;
                 this._adjustClients(job.client, -1, 0);
             }
         });
     }
 
     _updateMaxJobsData() {
-        this.maxJobsData.text = `Slots ${this.currentJobs} / ${this.maxJobs} (${((this.currentJobs / this.maxJobs) * 100).toFixed(1)}%)`;
+        this.maxJobsData.text = `Slots ${this.jobs.size} / ${this.maxJobs} (${((this.jobs.size / this.maxJobs) * 100).toFixed(1)}%)`;
         this.maxJobsData.width = this.ctx.measureText(this.maxJobsData.text).width;
     }
 
@@ -553,7 +550,6 @@ export class PieChartComponent implements OnDestroy {
         this.jobs.set(job.id, job);
         this._adjustClients(job.client, 1, 0);
 
-        this.currentJobs += 1;
         this._updateMaxJobsData();
     }
 
@@ -563,7 +559,6 @@ export class PieChartComponent implements OnDestroy {
             console.error(JSON.stringify(Array.from(this.jobs.keys())));
             return;
         }
-        this.currentJobs -= 1;
         this._updateMaxJobsData();
 
         const realjob = this.jobs.get(job.id);

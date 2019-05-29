@@ -532,6 +532,7 @@ export class PieChartComponent implements OnDestroy {
                 this._adjustClients(job.client, -1, 0);
             }
         });
+        this._updateMaxJobsData();
     }
 
     _updateMaxJobsData() {
@@ -562,11 +563,11 @@ export class PieChartComponent implements OnDestroy {
             console.error(JSON.stringify(Array.from(this.jobs.keys())));
             return;
         }
-        this._updateMaxJobsData();
 
         const realjob = this.jobs.get(job.id);
         this.jobs.delete(job.id);
         this._adjustClients(realjob.client, -1, 0);
+        this._updateMaxJobsData();
     }
 
     _updateStats(stats) {

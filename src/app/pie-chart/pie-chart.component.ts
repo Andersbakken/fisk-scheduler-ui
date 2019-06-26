@@ -24,7 +24,7 @@ export class PieChartComponent implements OnDestroy {
     maxJobsData: any = {};
     jobs = new Map();
     clientJobs = [];
-    minTime = 1000;
+    minTime = 5000;
     pieBuilding: boolean;
     noAnimate: boolean;
     inited: boolean = false;
@@ -321,17 +321,28 @@ export class PieChartComponent implements OnDestroy {
 
                     // legend usage
                     const usage = (c.cacheJobs || 0) + " / " + c.jobs + " (" + Math.round(c.jobs / maxJobs * 1000) / 10 + "%)";
-                    const metrics = ctx.measureText(usage);
+                    const usageMetrics = ctx.measureText(usage);
+
+                    const pad = (num, size) => {
+                        return ("000000000" + num).substr(-size);
+                    };
+
+                    const delta = (new Date()).valueOf() - c.ts;
+                    const ts = "(" + pad(Math.floor(delta / 1000 / 60), 2) + ":" + pad(Math.floor(delta / 1000) % 60, 2) + ")";
+                    const tsMetrics = ctx.measureText(ts);
+
+                    const metricsWidth = usageMetrics.width + tsMetrics.width + 10;
 
                     // legend usage background
                     ctx.fillStyle = c.color;
                     ctx.beginPath();
-                    ctx.rect(legendX + legendSpace - metrics.width - 15, legendY - 20, metrics.width + 15, 30);
+                    ctx.rect(legendX + legendSpace - metricsWidth - 15, legendY - 20, metricsWidth + 15, 30);
                     ctx.fill();
 
                     // legend usage text
                     ctx.fillStyle = c.fg;
-                    ctx.fillText(usage, legendX + legendSpace - metrics.width - 10, legendY);
+                    ctx.fillText(usage, legendX + legendSpace - metricsWidth - 10, legendY);
+                    ctx.fillText(ts, legendX + legendSpace - tsMetrics.width - 10, legendY);
 
                     cur += Math.PI * 2 * (c.animatedJobs / maxJobs);
                     legendY += 30 + add;

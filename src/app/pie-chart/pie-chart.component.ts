@@ -332,7 +332,7 @@ export class PieChartComponent implements OnDestroy {
                         return ("000000000" + num).substr(-size);
                     };
 
-                    const delta = (new Date()).valueOf() - c.ts;
+                    const delta = now - c.ts;
                     const ts = "(" + pad(Math.floor(delta / 1000 / 60), 2) + ":" + pad(Math.floor(delta / 1000) % 60, 2) + ")";
                     const tsMetrics = ctx.measureText(ts);
 

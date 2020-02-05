@@ -420,9 +420,8 @@ export class PieChartComponent implements OnDestroy {
     }
 
     _color(key, invert) {
-        // taken from https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
         function rand(min, max, r) {
-            return min + r() * (max - min);
+            return min + (r() * (max - min));
         }
 
         function tohex(d) {
@@ -432,7 +431,7 @@ export class PieChartComponent implements OnDestroy {
         const random = seedrandom(key);
         var h = rand(1, 360, random);
         var s = rand(0, 100, random);
-        var l = Math.max(rand(0, 100, random), 45);
+        var l = rand(45, 100, random);
 
         if (invert) {
             s = 100 - s;

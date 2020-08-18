@@ -230,14 +230,20 @@ export class PieChartComponent implements OnDestroy {
                 let cur = rad(270);
                 let legendY = 40;
 
+                legendY += 40;
+
                 ctx.fillStyle = "black";
-                ctx.fillText(this.maxJobsData.text, legendX - this.maxJobsData.width - 75, legendY);
+                ctx.fillText(this.maxJobsData.text, 10, 20);
 
                 const maxJobs = this.pieBuilding ? this.jobs.size : this.maxJobs;
                 if (!maxJobs) {
                     window.requestAnimationFrame(animate);
                     return;
                 }
+
+                const allCache = {
+                    hits: 0, misses: 0
+                };
 
                 const now = (new Date()).valueOf();
                 for (let clientIdx = 0; clientIdx < this.clientJobs.length; ++clientIdx) {
@@ -308,7 +314,10 @@ export class PieChartComponent implements OnDestroy {
 
                     // legend name text
                     ctx.fillStyle = c.fg;
-                    ctx.fillText(c.client.modifiedName, legendX, legendY);
+                    ctx.fillText(c.client.modifiedName, legendX + 2, legendY);
+
+                    allCache.hits += c.cacheJobs;
+                    allCache.misses += c.jobs;
 
                     let add = 0;
                     // cache hits for client
@@ -351,6 +360,29 @@ export class PieChartComponent implements OnDestroy {
 
                     cur += Math.PI * 2 * (c.animatedJobs / maxJobs);
                     legendY += 30 + add;
+                }
+
+                if (allCache.hits > 0 || allCache.misses > 0) {
+                    legendY = 0; // top of page
+
+                    let cw = legendSpace * (allCache.hits / (allCache.hits + allCache.misses));
+                    let jw = legendSpace * (allCache.misses / (allCache.hits + allCache.misses));
+
+                    ctx.fillStyle = "#3d3";
+                    ctx.beginPath();
+                    ctx.rect(legendX, legendY - 20 + 31, cw, 30);
+                    ctx.fill();
+                    ctx.fillStyle = "#33d";
+                    ctx.beginPath();
+                    ctx.rect(legendX + cw, legendY - 20 + 31, jw, 30);
+                    ctx.fill();
+
+                    const allstr = `${allCache.hits} / ${allCache.misses}`;
+                    const allm = ctx.measureText(allstr);
+
+                    ctx.fillStyle = "#fff";
+                    ctx.fillText('Cache usage', legendX + 2, legendY + 31);
+                    ctx.fillText(allstr, legendX + legendSpace - allm.width - 15, legendY + 31);
                 }
 
                 ctx.fillStyle = "#fff";

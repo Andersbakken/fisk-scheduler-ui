@@ -233,7 +233,7 @@ export class PieChartComponent implements OnDestroy {
                 legendY += 40;
 
                 ctx.fillStyle = "black";
-                ctx.fillText(this.maxJobsData.text, 10, 20);
+                ctx.fillText(this.maxJobsData.text, 10, 31);
 
                 const maxJobs = this.pieBuilding ? this.jobs.size : this.maxJobs;
                 if (!maxJobs) {

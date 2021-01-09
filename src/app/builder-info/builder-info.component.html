@@ -1,0 +1,18 @@
+<mat-card class="scroll">
+  <div class="info">{{this.client.modifiedName}}</div>
+  <div class="table" *ngFor="let job of jobs">
+    <div class="pre">
+      {{job.sourceFile}}
+    </div>
+    <div class="pre table-mid">
+      {{job.builder.ip}}
+    </div>
+    <div class="pre table-end">
+      {{job.date}}
+    </div>
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCloseClick()" cdkFocusInitial>Close</button>
+  </div>
+</mat-card>

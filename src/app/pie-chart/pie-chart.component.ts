@@ -4,7 +4,7 @@ import { FiskService } from '../fisk.service';
 import { ConfigService } from '../config.service';
 import { MessageService } from '../message.service';
 import { TabChangedService } from '../tab-changed.service';
-import { SlaveInfoComponent } from '../slave-info/slave-info.component';
+import { BuilderInfoComponent } from '../builder-info/builder-info.component';
 import * as seedrandom from 'seedrandom';
 
 declare let window: any;
@@ -44,11 +44,11 @@ export class PieChartComponent implements OnDestroy {
 
         this.fiskData = this.fisk.on("data", (data: any) => {
             switch (data.type) {
-            case "slaveAdded":
-                this._slaveAdded(data);
+            case "builderAdded":
+                this._builderAdded(data);
                 break;
-            case "slaveRemoved":
-                this._slaveRemoved(data);
+            case "builderRemoved":
+                this._builderRemoved(data);
                 break;
             case "jobStarted":
                 this._jobStarted(data);
@@ -142,7 +142,7 @@ export class PieChartComponent implements OnDestroy {
                         event.preventDefault();
                         ret = false;
 
-                        this.dialog.open(SlaveInfoComponent, { data: { client: c.client, jobs: this.jobs} });
+                        this.dialog.open(BuilderInfoComponent, { data: { client: c.client, jobs: this.jobs} });
                     }
                 });
                 return ret;
@@ -554,27 +554,27 @@ export class PieChartComponent implements OnDestroy {
         return true;
     }
 
-    _slaveId(slave) {
-        return slave.ip + ":" + slave.port;
+    _builderId(builder) {
+        return builder.ip + ":" + builder.port;
     }
 
-    _slaveAdded(slave) {
-        this.maxJobs += slave.slots;
+    _builderAdded(builder) {
+        this.maxJobs += builder.slots;
         this._updateMaxJobsData();
     }
 
-    _slaveRemoved(slave) {
-        this.maxJobs -= slave.slots;
+    _builderRemoved(builder) {
+        this.maxJobs -= builder.slots;
         this._updateMaxJobsData();
         if (this.maxJobs < 0) {
             throw new Error("Negative jobs reached!");
         }
 
-        // clear out the jobs for this slave
+        // clear out the jobs for this builder
         // console.log("foff", this.jobs);
-        const slaveid = this._slaveId(slave);
+        const builderid = this._builderId(builder);
         this.jobs.forEach((job, id) => {
-            if (slaveid == this._slaveId(job.slave)) {
+            if (builderid == this._builderId(job.builder)) {
                 this.jobs.delete(id);
                 this._adjustClients(job.client, -1, 0);
             }

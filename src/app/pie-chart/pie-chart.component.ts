@@ -70,6 +70,9 @@ export class PieChartComponent implements OnDestroy {
             case "uiInfo":
                 console.log("got ui version", data.package.version);
                 break;
+            default:
+                console.error(`unexpected fisk message type ${data.type}`);
+                break;
             }
         });
         if (this.fisk.isOpen) {

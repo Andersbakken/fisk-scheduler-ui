@@ -22,7 +22,15 @@ export class ConfigComponent {
 
     constructor(private config: ConfigService, private tabChanged: TabChangedService) {
         this.scheduler = config.get("scheduler", location.hostname);
-        this.port = config.get("port", location.port || (location.protocol === "https:" ? 8098 : 8097));
+        const https = location.protocol === "https:";
+        this.port = config.get("port", location.port || (https ? 8098 : 8097));
+        if (https && this.port === 8097) {
+            this.port = 8098;
+            config.set("port", this.port, false);
+        } else if (!https && this.port === 8098) {
+            this.port = 8097;
+            config.set("port", this.port, false);
+        }
         this.chartLegendSpace = config.get("chart-legend-space", 400);
         this.client = config.get("client", "");
         this.fgcolor = config.get("fgcolor", "#ffffff");

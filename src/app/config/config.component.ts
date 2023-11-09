@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ConfigService } from '../config.service';
 import { TabChangedService } from '../tab-changed.service';
+import { WebSocketService } from '../websocket.service';
 
 @Component({
     selector: 'app-config',
@@ -21,16 +22,9 @@ export class ConfigComponent {
     timers: { [key: string]: number } = {};
 
     constructor(private config: ConfigService, private tabChanged: TabChangedService) {
-        this.scheduler = config.get("scheduler", location.hostname);
-        const https = location.protocol === "https:";
-        this.port = config.get("port", location.port || (https ? 8098 : 8097));
-        if (https && this.port === 8097) {
-            this.port = 8098;
-            config.set("port", this.port, false);
-        } else if (!https && this.port === 8098) {
-            this.port = 8097;
-            config.set("port", this.port, false);
-        }
+        const webSocketLocation = WebSocketService.websocketLocation(config, window.location);
+        this.port = webSocketLocation.port;
+        this.scheduler = webSocketLocation.host;
         this.chartLegendSpace = config.get("chart-legend-space", 400);
         this.client = config.get("client", "");
         this.fgcolor = config.get("fgcolor", "#ffffff");

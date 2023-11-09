@@ -33,9 +33,11 @@ export class FiskService {
             if (res)
                 this.emit(this.dataListeners, { type: "uiInfo", package: res });
         });
-        this._host = this.config.get("scheduler", location.hostname);
-        this._port = this.config.get("port", location.port || 8097);
-        this._secure = Boolean(this.config.get("secure", location.protocol === "https:"));
+        const webSocketLocation = WebSocketService.websocketLocation(config, window.location);
+
+        this._host = webSocketLocation.host;
+        this._port = webSocketLocation.port;
+        this._secure = webSocketLocation.secure;
         if (this._host !== undefined) {
             this.open(this._host, this._port, this._secure);
         }
@@ -45,8 +47,11 @@ export class FiskService {
             case "scheduler":
             case "port":
                 this.close();
-                this._host = this.config.get("scheduler", location.hostname);
-                this._port = this.config.get("port", location.port || 8097);
+                const webSocketLocation = WebSocketService.websocketLocation(config, window.location);
+
+                this._host = webSocketLocation.host;
+                this._port = webSocketLocation.port;
+                this._secure = webSocketLocation.secure;
                 if (this._host !== undefined) {
                     this.open(this._host, this._port, this._secure);
                 }

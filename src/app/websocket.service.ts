@@ -1,4 +1,11 @@
 import { Injectable } from '@angular/core';
+import { ConfigService } from "./config.service";
+
+export interface WebSocketLocation {
+    port: number;
+    host: string;
+    secure: boolean;
+}
 
 @Injectable({
     providedIn: 'root'
@@ -33,6 +40,20 @@ export class WebSocketService {
 
     get isOpen(): boolean {
         return this.socket && this.socket.readyState == WebSocket.OPEN;
+    }
+
+    static websocketLocation(config: ConfigService, location: Location): WebSocketLocation {
+        const host = config.get("scheduler", location.hostname);
+        const secure = location.protocol === "https:";
+        let port = config.get("port", location.port || (secure ? 8098 : 8097));
+        if (secure && port === 8097) {
+            port = 8098;
+            config.set("port", port, false);
+        } else if (!secure && port === 8098) {
+            port = 8097;
+            config.set("port", port, false);
+        }
+        return { host, port, secure };
     }
 
     open(host: string, port: number, secure: boolean) {

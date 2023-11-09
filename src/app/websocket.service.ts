@@ -35,12 +35,12 @@ export class WebSocketService {
         return this.socket && this.socket.readyState == WebSocket.OPEN;
     }
 
-    open(host: string, port: number) {
+    open(host: string, port: number, secure: boolean) {
         if (this.isopen) {
             return;
         }
         try {
-            this.socket = new WebSocket(`ws://${host}:${port}/monitor`);
+            this.socket = new WebSocket(`${secure ? "wss" : "ws"}://${host}:${port}/monitor`);
         } catch (e) {
             this.socket = undefined;
             for (let i = 0; i < this.errorListeners.length; ++i) {

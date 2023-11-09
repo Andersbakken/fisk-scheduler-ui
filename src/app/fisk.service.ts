@@ -14,6 +14,7 @@ export class FiskService {
     private schedulerListeners: any = [];
     private _host: string;
     private _port: number;
+    private _secure: boolean;
     private _currentKey: number = 0;
 
     get host(): string
@@ -34,8 +35,9 @@ export class FiskService {
         });
         this._host = this.config.get("scheduler", location.hostname);
         this._port = this.config.get("port", location.port || 8097);
+        this._secure = Boolean(this.config.get("secure", location.protocol === "https:"));
         if (this._host !== undefined) {
-            this.open(this._host, this._port);
+            this.open(this._host, this._port, this._secure);
         }
 
         this.config.onChange((key: string) => {
@@ -46,7 +48,7 @@ export class FiskService {
                 this._host = this.config.get("scheduler", location.hostname);
                 this._port = this.config.get("port", location.port || 8097);
                 if (this._host !== undefined) {
-                    this.open(this._host, this._port);
+                    this.open(this._host, this._port, this._secure);
                 }
                 this.emit(this.schedulerListeners, key);
                 break;
@@ -58,17 +60,17 @@ export class FiskService {
         return this.ws.isOpen;
     }
 
-    open(host: string, port: number) {
+    open(host: string, port: number, secure: boolean) {
         console.log("reoping");
         this.ws.on("message", (data: any) => {
             this.emit(this.dataListeners, data);
         });
         this.ws.on("close", () => {
             // let's retry with an exponential backoff
-            this.reconnect(host, port);
+            this.reconnect(host, port, secure);
         });
         this.ws.on("error", () => {
-            this.reconnect(host, port);
+            this.reconnect(host, port, secure);
         });
         this.ws.on("open", () => {
             this.emit(this.openListeners);
@@ -76,7 +78,7 @@ export class FiskService {
             this.resolvePending(true);
             console.log("ok");
         });
-        this.ws.open(host, port);
+        this.ws.open(host, port, secure);
     }
 
     close(code?: number, reason?: string) {
@@ -127,7 +129,7 @@ export class FiskService {
         this.ws.send(message);
     }
 
-    private reconnect(host: string, port: number) {
+    private reconnect(host: string, port: number, secure: boolean) {
         if (this.backoff.running("fisk")) {
             this.resolvePending(false);
             return;
@@ -140,7 +142,7 @@ export class FiskService {
         this.backoff.backoff("fisk", when, (): Promise<any> => {
             return new Promise<any>((resolve, reject) => {
                 this.pendingConnect.push({ resolve: resolve, reject: reject });
-                this.open(host, port);
+                this.open(host, port, secure);
             });
         });
     }

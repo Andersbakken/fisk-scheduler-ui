@@ -3,10 +3,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
-import { MatCardModule, MatTabsModule, MatListModule,
-         MatInputModule, MatSnackBarModule, MatCheckboxModule,
-         MatDialogModule, MatButtonModule } from '@angular/material';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 import { ColorPickerModule } from 'ngx-color-picker';
 
@@ -23,7 +29,6 @@ import { LogComponent } from './log/log.component';
 import { PieChartComponent } from './pie-chart/pie-chart.component';
 import { CompilersComponent, CompilersComponentDialog } from './compilers/compilers.component';
 import { BuilderInfoComponent } from './builder-info/builder-info.component';
-import { HttpClientModule } from '@angular/common/http';
 
 const appRoutes: Routes = [
     { path: 'config', component: ConfigComponent },
@@ -34,10 +39,6 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-    entryComponents: [
-        CompilersComponentDialog,
-        BuilderInfoComponent
-    ],
     declarations: [
         AppComponent,
         ConfigComponent,
@@ -53,7 +54,6 @@ const appRoutes: Routes = [
         BrowserModule,
         ColorPickerModule,
         FormsModule,
-        HttpClientModule,
         MatButtonModule,
         MatCardModule,
         MatCheckboxModule,
@@ -65,6 +65,7 @@ const appRoutes: Routes = [
         RouterModule.forRoot(appRoutes)
     ],
     providers: [
+        provideHttpClient(),
         WebSocketService,
         BackoffService,
         FiskService,

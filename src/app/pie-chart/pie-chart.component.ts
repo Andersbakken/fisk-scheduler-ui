@@ -1,11 +1,11 @@
 import { Component, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FiskService } from '../fisk.service';
 import { ConfigService } from '../config.service';
 import { MessageService } from '../message.service';
 import { TabChangedService } from '../tab-changed.service';
 import { BuilderInfoComponent } from '../builder-info/builder-info.component';
-import * as seedrandom from 'seedrandom';
+import seedrandom from 'seedrandom';
 
 declare let window: any;
 

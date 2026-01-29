@@ -27,9 +27,9 @@ export class CompilersComponent {
                             e.hash = k;
                         const info = { name: undefined, major: undefined, minor: undefined, patch: undefined, version: "" };
                         const infos = (e.info || "").split("\n");
-                        const crx = /^(clang) version ([0-9x]+)\.([0-9+x])\.([0-9x]+)/;
-                        const grx = /^(gcc) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
-                        const lrx = /^(Apple LLVM) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
+                        const crx = /(clang) version ([0-9x]+)\.([0-9+x])\.([0-9x]+)/;
+                        const grx = /(gcc) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
+                        const lrx = /(Apple LLVM) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
                         const trx = /^Target: (.*)$/;
                         let t, m;
                         for (let i = 0; i < infos.length && (!t || !m); ++i) {

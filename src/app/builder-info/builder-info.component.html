@@ -2,7 +2,7 @@
   <div class="info">{{this.client.modifiedName}}</div>
   <div class="table" *ngFor="let job of jobs">
     <div class="pre">
-      {{job.sourceFile}}
+      {{job.sourceBasename}}
     </div>
     <div class="pre table-mid">
       {{job.builder.ip}}

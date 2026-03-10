@@ -15,6 +15,9 @@ export class BuilderInfoComponent {
         this.client = data.client;
         data.jobs.forEach(job => {
             if (job.client.name == this.client.name) {
+                const fullPath = job.sourcePath || job.sourceFile || '';
+                const lastSlash = fullPath.lastIndexOf('/');
+                job.sourceBasename = lastSlash !== -1 ? fullPath.substring(lastSlash + 1) : fullPath;
                 this.jobs.push(job);
             }
         });

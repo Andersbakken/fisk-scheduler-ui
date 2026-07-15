@@ -25,16 +25,20 @@ export class CompilersComponent {
                     if (typeof e === "object" && "system" in e) {
                         if (!("hash" in e))
                             e.hash = k;
-                        const info = { name: undefined, major: undefined, minor: undefined, patch: undefined, version: "" };
+                        const info: any = { name: undefined, major: undefined, minor: undefined, patch: undefined, version: "" };
                         const infos = (e.info || "").split("\n");
-                        const crx = /(clang) version ([0-9x]+)\.([0-9+x])\.([0-9x]+)/;
-                        const grx = /(gcc) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
-                        const lrx = /(Apple LLVM) version ([0-9x]+)\.([0-9x]+)\.([0-9x]+)/;
+                        // One combined regex: matches "clang version X.Y.Z",
+                        // "gcc version X.Y.Z", "Apple LLVM version X.Y.Z",
+                        // anywhere in a line. Handles vendor-tagged builds
+                        // like "Android (10552028, ...) clang version 17.0.2"
+                        // because .exec() is unanchored.
+                        const vrx = /(Apple LLVM|clang|gcc) version (\d+)(?:\.(\d+))?(?:\.(\d+))?/;
                         const trx = /^Target: (.*)$/;
-                        let t, m;
+                        let t: RegExpExecArray | null = null;
+                        let m: RegExpExecArray | null = null;
                         for (let i = 0; i < infos.length && (!t || !m); ++i) {
                             if (!m) {
-                                m = crx.exec(infos[i]) || grx.exec(infos[i]) || lrx.exec(infos[i]);
+                                m = vrx.exec(infos[i]);
                             }
                             if (!t) {
                                 t = trx.exec(infos[i]);
@@ -43,12 +47,12 @@ export class CompilersComponent {
 
                         if (m) {
                             info.name = m[1];
-                            info.major = parseInt(m[2]) || m[2];
-                            info.minor = parseInt(m[3]) || m[3];
-                            info.patch = parseInt(m[4]) || m[4];
+                            info.major = parseInt(m[2], 10) || 0;
+                            info.minor = m[3] ? parseInt(m[3], 10) || 0 : 0;
+                            info.patch = m[4] ? parseInt(m[4], 10) || 0 : 0;
                             info.version = `${info.major}.${info.minor}.${info.patch}`;
                         } else {
-                            console.log("failed", infos);
+                            console.log("failed to parse compiler version from info:", infos);
                         }
                         if (t) {
                             e.target = t[1];
